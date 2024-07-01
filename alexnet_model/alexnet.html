@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>TensorSpace - AlexNet</title>
+    <meta charset="UTF-8">
+    <meta name="author" content="zchholmes / https://github.com/zchholmes">
+    <meta name="author" content="syt123450 / https://github.com/syt123450">
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #container {
+            width: 100%;
+            height: 100%;
+        }
+
+        #loadingPanel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            z-index: 2;
+        }
+
+        #loading {
+            position: fixed;
+            width: 30%;
+            top: 150px;
+            margin-left: 35%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- forcing canvas to match the dimension of the input image -->
+    <div id="container"> <canvas id="container2" width="227" height="227" style="display: block;"></canvas>
+        <div id="loadingPad" style="margin-top: 25%; margin-left: 50%; height: 5rem; width: 5rem"
+            class="spinner-border text-center">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- loading dependency libraries -->
+    <script src="./lib/jquery.min.js"></script>
+    <script src="./lib/three.min.js"></script>
+    <script src="./lib/stats.min.js"></script>
+    <script src="./lib/tween.min.js"></script>
+    <script src="./lib/TrackballControls.js"></script>
+    <script src="./lib/tf.min.js"></script>
+    <script src="./dist/tensorspace.js"></script>
+
+    <script src="./data/imagenet_result.js"></script>
+
+    <script>
+        // defining model container
+        var modelContainer2;
+        modelContainer2 = document.getElementById("container");
+        // creating model
+        var model = new TSP.models.Sequential(modelContainer2, {
+
+            stats: true
+
+        });
+        // model architecture  
+        model.add(new TSP.layers.RGBInput());
+
+        model.add(new TSP.layers.Conv2d());
+
+        model.add(new TSP.layers.Pooling2d());
+
+        model.add(new TSP.layers.Conv2d());
+
+        model.add(new TSP.layers.Pooling2d());
+
+        model.add(new TSP.layers.Conv2d());
+
+        model.add(new TSP.layers.Conv2d());
+
+        model.add(new TSP.layers.Conv2d());
+
+        model.add(new TSP.layers.Pooling2d());
+
+        model.add(new TSP.layers.Dense({
+
+            paging: true,
+            segmentLength: 400
+
+        }));
+
+        model.add(new TSP.layers.Dense({
+
+            paging: true,
+            segmentLength: 400
+
+        }));
+
+        model.add(new TSP.layers.Output1d({
+
+            paging: true,
+            segmentLength: 400,
+            outputs: result //getting label names from the `result` var
+
+        }));
+
+        model.load({
+
+            type: "tensorflow",
+            url: "./alexnet_model/alexnet/model.json",
+            outputsName: ["norm1", "pool1", "norm2", "pool2", "conv3_1", "conv4_1", "conv5_1", "pool5", "Relu", "Relu_1", "Softmax"]
+
+        });
+
+        //function to read the JPG file as RGBx2 value
+        var context = document.getElementById('container2').getContext("2d");
+        var im_array = [];
+        var img = new Image();
+        img.onload = function () {
+            context.drawImage(img, 0, 0, img.width, img.height, 0, 0, 227, 227);
+            //227 is the required input image dimension for the model
+            var dataArray = context.getImageData(0, 0, 227, 227).data;
+            var array = [];
+            for (var i = 0; i < dataArray.length; i++) {
+                if (i % 4 !== 3) {
+                    array.push(parseFloat((dataArray[i] / 255).toFixed(4)));
+                }
+            }
+            im_array = array;
+            // console.log(array.toString());
+        };
+
+        //source of the image file (after uploading)
+        img.src = img_global.src;
+        document.getElementById('container2').style.display = "none";
+
+        model.init(function () {
+            $("#loadingPad").hide();
+            model.predict(im_array);
+            // need to change the array in model.predict
+        });
+
+    </script>
+</body>
+
+</html>
