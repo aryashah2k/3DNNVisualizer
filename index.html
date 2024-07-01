@@ -1,0 +1,106 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="data/imagenet_result.js"></script>
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="main.js"></script>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+
+
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <title>3DNN Visualizer</title>
+</head>
+
+<script type="text/javascript">
+    // declaring global vars
+    var img_global;
+    var clicked_item_id;
+
+    // checking the clicked item id of the dropdown
+    function clicked_item(id) {
+        clicked_item_id = id;
+        document.getElementById("dropdown_list").innerHTML = id;
+
+        // UI changes for lenet selection
+        if (clicked_item_id == 'lenet') {
+            $("#img_uploader").hide();
+            $("#upload_text").text("Click Submit to open the LeNet model");
+            $("#upload_text").css({ "text-align": "center" });
+
+        } else {
+            $("#img_uploader").show();
+            $("#upload_text").text("Upload Image");
+            $("#upload_text").css({ "text-align": "left" });
+        }
+    }
+
+    // selected model initialization 
+    function load_model() {
+
+        if (clicked_item_id == 'yolo') {
+            $("#include_html").load("./yolo_model/yolo.html");
+        }
+        else if (clicked_item_id == 'alexnet') {
+            $("#include_html").load("./alexnet_model/alexnet.html");
+        } else if (clicked_item_id == 'lenet') {
+            window.location.href = './LeNet_model/lenet.html'
+        } else {
+            alert('Please select a model');
+        }
+
+    }
+</script>
+
+<body>
+    <div class="container col-md-12">
+        <div class="col-md-10">
+            <div id="include_html" style="width: 104%; margin-left: -3%;">
+                <h3 style="text-align: center; margin-top: 20%; font-weight: bold;">Select an image and click Submit to
+                    visualize the model</h3>
+            </div>
+        </div>
+        <div class="col-md-2" style=" height: 100%; background-color: #e9f3ef94;">
+            <p style="border: .5px solid rgb(68, 68, 68); margin-top: 5%;"></p>
+            <h2 style="font-weight: bolder; text-align: center; margin-bottom: 5%;">
+                <img style="margin-top: -4%; margin-bottom: 3%;" src="favicon.png">
+                3DNN Visualizer</h2>
+            <p style="border: .5px solid rgb(68, 68, 68); margin-top: 5%;"></p>
+            <div class="form-group" style="margin-top: 10%">
+                <p id="upload_text" style="font-weight: bold; font-size: medium;">Upload Image</p>
+                <div id="img_uploader" class="input-group">
+                    <span class="input-group-btn">
+                        <span class="btn btn-default btn-file">
+                            Browse <input type="file" id="imgInp">
+                        </span>
+                    </span>
+                    <input type="text" class="form-control" style="max-width: 170px; float: right;" readonly> <br>
+                </div>
+                <div class="dropdown" style="margin-top: 8%; text-align: center;">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdown_list"
+                        data-toggle="dropdown">Select Model</button>
+                    <ul class="dropdown-menu">
+                        <li><a id="yolo" onclick="clicked_item(this.id)">yolo</a></li>
+                        <li><a id="alexnet" onclick="clicked_item(this.id)">alexnet</a></li>
+                        <li><a id="lenet" onclick="clicked_item(this.id)">lenet</a></li>
+                    </ul>
+                </div>
+                <div style="text-align: center;">
+                    <button type="submit" value="submit"
+                        style="padding: 0rem 2rem; border: none; height: 34px !important; margin-top: 10%; background-color: #50ce7d; color: #fff; font-size: 1em;"
+                        onclick="load_model()"> Submit</button>
+                </div>
+
+                <img style="margin-top: 10%; border: 1.5px solid black" id='img-upload' />
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
