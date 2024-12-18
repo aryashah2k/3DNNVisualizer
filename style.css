@@ -18,6 +18,45 @@
     display: block;
 }
 
-#img-upload{
-    width: 100%;
+  /* Media query for small screens */
+  @media (max-width: 500px) {
+
+    .col-lg-10,
+    .col-md-9 {
+        width: 100% !important;
+    }
+
+    .col-lg-2,
+    .col-md-3 {
+        width: 100% !important;
+        margin-top: 20px;
+        /* Adds space above sidebar when it moves down */
+    }
+
+    #include_html {
+        width: 100%;
+        margin-left: 0;
+        padding: 15px;
+    }
+
+    .sidebar-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .btn-file input {
+        width: 100%;
+    }
+
+    .dropdown-menu {
+        width: 100%;
+    }
+}
+
+/* Optional: Custom styles for the images */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
 }
